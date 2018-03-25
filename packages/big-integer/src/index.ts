@@ -223,25 +223,47 @@ export default class BigInteger {
   }
 
   public gcd (value: BigIntegerValue): BigInteger {
-    const other = new (this.constructor as any)(value)
+    const { constructor } = this
+    let a = new (constructor as any)(this)
+    let b = new (constructor as any)(value)
 
-    if (this.iszero()) return other
-    if (other.iszero()) return this
+    const cmp = a.cmp(b)
+
+    if (cmp === 0) {
+      return a
+    } else if (a.cmp(b) < 0) { // assert A >= B
+      const tmp = a
+      a = b
+      b = tmp
+    }
+
+    // The underlying algorithm does not allow leading 0's so we trim them.
+    const al = a.l
+    const aj = al.length
+    const ai = _trim_positive(al, 0, aj)
+    // a is 0
+    if (ai >= aj) return b
+
+    const bl = b.l
+    const bj = bl.length
+    const bi = _trim_positive(bl, 0, bj)
+    // b is 0
+    if (bi >= bj) return a
 
     const res = _euclidean_algorithm(
       BASE,
-      this.l.slice(),
-      0,
-      this.l.length,
-      other.l,
-      0,
-      other.l.length
+      al,
+      ai,
+      aj,
+      bl,
+      bi,
+      bj
     )
 
-    other.l = res[0]
-    other.n = false
+    a.l = res[0].slice(res[1], res[2])
+    a.n = false
 
-    return other
+    return a
   }
 
   public cmp (value: BigIntegerValue): number {
