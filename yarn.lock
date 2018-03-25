@@ -2,21 +2,6 @@
 # yarn lockfile v1
 
 
-"@aureooms/js-error@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@aureooms/js-error/-/js-error-3.0.0.tgz#c06a455569c4cb26c3792ab9c9f075da707823de"
-
-"@aureooms/js-integer-big-endian@^4.1.0", "@aureooms/js-integer-big-endian@aureooms/js-integer-big-endian":
-  version "4.1.0"
-  resolved "https://codeload.github.com/aureooms/js-integer-big-endian/tar.gz/a012cd05b0e029bb047191ccc0bdd18a18bd07b1"
-
-"@aureooms/js-integer@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@aureooms/js-integer/-/js-integer-3.0.0.tgz#e6aae1b9d14d79eba4a7aa52231e9cc7315686b0"
-  dependencies:
-    "@aureooms/js-error" "^3.0.0"
-    "@aureooms/js-integer-big-endian" "^4.1.0"
-
 "@ava/babel-plugin-throws-helper@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@ava/babel-plugin-throws-helper/-/babel-plugin-throws-helper-2.0.0.tgz#2fc1fe3c211a71071a4eca7b8f7af5842cd1ae7c"
@@ -687,6 +672,14 @@ block-stream@*:
 bluebird@^3.0.0:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
+
+bn.js@^4.11.8:
+  version "4.11.8"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
+
+bn@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bn/-/bn-1.0.1.tgz#a153825e6b1eb2c2db7726149b047a07ce0a3bb3"
 
 boom@2.x.x:
   version "2.10.1"

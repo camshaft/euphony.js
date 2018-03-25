@@ -6,13 +6,11 @@
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@aureooms/js-integer": "^3.0.0",
-    "@aureooms/js-integer-big-endian": "aureooms/js-integer-big-endian"
+    "bn.js": "^4.11.8"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

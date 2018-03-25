@@ -19,7 +19,7 @@ const opType = gen.array(gen.array([
 
 test('decimal.js oracle', check(opType, (t, ops) => {
   let expected = new Decimal(0)
-  let actual = new Rational(0, false)
+  let actual = new Rational(0)
   t.true(+expected.valueOf() === actual.valueOf())
 
   ops.forEach(([[n, d], op]: [[number, number], Ops]) => {

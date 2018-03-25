@@ -21,7 +21,7 @@ export default class Rational {
       this.simplify(simplify)
     } else {
       this.n = new BigInteger(value)
-      this.d = new BigInteger(1)
+      this.d = one
       this._simplify = simplify
     }
   }
@@ -35,7 +35,7 @@ export default class Rational {
     } else {
       const x = this.n.mul(d)
       const y = n.mul(this.d)
-      other.n = x.add(y)
+      other.n = x.iadd(y)
       other.d = this.d.mul(d)
     }
 
@@ -43,7 +43,7 @@ export default class Rational {
   }
 
   public div (value: RationalValue): Rational {
-    if (this.n.iszero()) return this
+    if (this.n.isZero()) return this
 
     const other = new (this.constructor as any)(value, false)
 
@@ -55,7 +55,7 @@ export default class Rational {
   }
 
   public mul (value: RationalValue): Rational {
-    if (this.n.iszero()) return this
+    if (this.n.isZero()) return this
 
     const other = new (this.constructor as any)(value, false)
 
@@ -75,7 +75,7 @@ export default class Rational {
     } else {
       const x = this.n.mul(d)
       const y = n.mul(this.d)
-      other.n = x.sub(y)
+      other.n = x.isub(y)
       other.d = this.d.mul(d)
     }
 
@@ -113,7 +113,7 @@ export default class Rational {
     }
     const { n, d } = this
 
-    if (this.n.iszero()) {
+    if (this.n.isZero()) {
       this.d = one
       return this
     }
@@ -134,6 +134,10 @@ export default class Rational {
 
   public toString (): string {
     return `${this.n}/${this.d}`
+  }
+
+  public toBigInteger(): BigInteger {
+    return this.n.div(this.d)
   }
 }
 
