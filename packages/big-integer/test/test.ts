@@ -7,14 +7,21 @@ const enum Ops {
   add = 'add',
   sub = 'sub',
   mul = 'mul',
-  div = 'div'
+  div = 'div',
+  mod = 'mod'
 }
 
-const validOps = [Ops.add, Ops.sub, Ops.mul, Ops.div]
+const validOps = [
+  Ops.add,
+  Ops.sub,
+  Ops.mul,
+  Ops.div,
+  // Ops.mod
+]
 
-test('decimal.js oracle', check(gen.array(gen.array([gen.int, gen.oneOf(validOps)])), (t, ops) => {
-  let expected = new Decimal(0)
-  let actual = new BigInteger(0)
+test('decimal.js oracle', check(gen.int, gen.array(gen.array([gen.int, gen.oneOf(validOps)])), (t, initial, ops) => {
+  let expected = new Decimal(initial)
+  let actual = new BigInteger(initial)
   t.true(+expected.valueOf() === actual.valueOf())
 
   ops.forEach(([v, op]: [number, Ops]) => {
@@ -23,14 +30,30 @@ test('decimal.js oracle', check(gen.array(gen.array([gen.int, gen.oneOf(validOps
     actual = actual[op](v)
   })
 
-  t.true(+expected.valueOf() === actual.valueOf())
+  const tolerance = Math.pow(ops.length, 2)
+
+  const converted = new Decimal(actual.toString())
+
+  t.true(expected.sub(converted).lte(tolerance))
 }))
 
-function recursiveEuclid(a: number, b: number): number {
- if (b === 0) return a
- return recursiveEuclid(b, a % b)
-}
+// function euclidOracle(a: BigInteger, b: BigInteger): BigInteger {
+//   while (true) {
+//     if (a.iszero()) return b
+//     b = a.mod(b)
+//     if (b.iszero()) return a
+//     a = b.mod(a)
+//   }
+// }
 
-test('recursiveEuclid', check(gen.posInt, gen.posInt, (t, a, b) => {
-  t.true(new BigInteger(a).gcd(b).eq(recursiveEuclid(a, b)))
-}))
+// const bigNumbers = gen.array(gen.posInt)
+
+// test('euclidOracle', check(bigNumbers, bigNumbers, (t, a, b) => {
+//   const x = new BigInteger(a.join('') || 0)
+//   const y = new BigInteger(b.join('') || 0)
+//   console.log(x.toString(), y.toString())
+//   const expected = euclidOracle(x, y)
+//   const actual = new BigInteger(x).gcd(y)
+
+//   t.true(expected.eq(actual))
+// }))

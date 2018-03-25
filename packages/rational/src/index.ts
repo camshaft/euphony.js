@@ -43,6 +43,8 @@ export default class Rational {
   }
 
   public div (value: RationalValue): Rational {
+    if (this.n.iszero()) return this
+
     const other = new (this.constructor as any)(value, false)
 
     const { n, d } = other
@@ -53,6 +55,8 @@ export default class Rational {
   }
 
   public mul (value: RationalValue): Rational {
+    if (this.n.iszero()) return this
+
     const other = new (this.constructor as any)(value, false)
 
     const { n, d } = other

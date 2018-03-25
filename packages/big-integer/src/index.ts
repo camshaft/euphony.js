@@ -177,8 +177,6 @@ export default class BigInteger {
 
     // Dividend (& Remainder)
     let R = new (this.constructor as any)(0)
-    R.l = this.l.slice()
-
     const D = R.l = _alloc(lj - li)
     _copy(this.l, li, lj, D, 0)
 
@@ -199,13 +197,14 @@ export default class BigInteger {
       if (otherIsNegative) {
         if (!this.n) {
           _increment(BASE, q, 0, q.length)
-          R = R.add(other)  // TODO optimize
+          _iadd(other, R)
         } else {
-          R = R.neg() // TODO optimize
+          R.n = !R.n
         }
       } else {
         _increment(BASE, q, 0, q.length)
-        R = R.neg().add(other)  // TODO optimize
+        R.n = !R.n
+        _iadd(other, R)
       }
     }
 
