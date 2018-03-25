@@ -1,0 +1,25 @@
+{
+  "name": "euphony",
+  "description": "modular music composition",
+  "repository": "https://github.com/camshaft/euphony.js.git",
+  "author": "Cameron Bytheway <bytheway.cameron@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^9.6.0",
+    "babel-core": "^6.26.0",
+    "babel-runtime": "^6.26.0",
+    "rollup": "^0.57.1",
+    "rollup-plugin-auto-external": "^1.2.0",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-typescript2": "^0.12.0",
+    "typescript": "^2.7.2"
+  }
+}

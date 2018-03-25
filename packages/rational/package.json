@@ -1,0 +1,25 @@
+{
+  "name": "@euphony/rational",
+  "version": "1.0.0",
+  "description": "Rational numbers",
+  "main": "build/index.js",
+  "module": "build/index.mjs",
+  "license": "MIT",
+  "dependencies": {
+    "@euphony/big-integer": "*"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "ava-testcheck": "^1.0.0-rc.0",
+    "decimal.js": "^10.0.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "rollup -c test/rollup.config.js && ava"
+  },
+  "ava": {
+    "files": [
+      "build/test.js"
+    ]
+  }
+}
