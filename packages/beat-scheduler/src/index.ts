@@ -4,15 +4,9 @@ import { Timecode } from '@euphony/time'
 import { IParentScheduler, IScheduledTask, ITask } from '@euphony/types'
 import { SkewableTask } from '@euphony/skewable-task'
 
-export interface IBeatSchedulerOpts {
-  tempo?: number
-  numerator?: number
-  denominator?: number
-}
-
 export class BeatTask extends SkewableTask<Beat, BeatTimecode, Timecode> {
-  protected toRootTimecode(timecode: BeatTimecode): Timecode {
-    return timecode.toTimecode()
+  protected toRootTimecode(beat: BeatTimecode): Timecode {
+    return beat.timecode
   }
 }
 

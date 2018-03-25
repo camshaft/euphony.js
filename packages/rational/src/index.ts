@@ -54,6 +54,17 @@ export default class Rational {
     return other.simplify(this._simplify)
   }
 
+  public divmod (value?: RationalValue): { div: Rational, mod: Rational } {
+    const { n, d } = value === undefined ? this : this.div(value)
+
+    const { div, mod } = n.divmod(d)
+
+    return {
+      div: new (this.constructor as any)(div, false),
+      mod: new (this.constructor as any)([mod, d], false)
+    }
+  }
+
   public mul (value: RationalValue): Rational {
     if (this.n.isZero()) return this
 
@@ -139,6 +150,10 @@ export default class Rational {
   public toBigInteger(): BigInteger {
     return this.n.div(this.d)
   }
+
+  // public inspect() {
+  //   return `<${this.constructor.name} ${this.toString()}>`
+  // }
 }
 
 export { Rational }

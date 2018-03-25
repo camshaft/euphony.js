@@ -53,8 +53,22 @@ export class BeatTimecode extends Beat implements ITime {
     return result
   }
 
-  public toTimecode (): Timecode {
-    return this.timecode
+  public mul (value: BeatTimecode | RationalValue): BeatTimecode {
+    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
+    const result = super.mul(timecode) as BeatTimecode
+    result.timecode = this.timecode.mul(timecode.timecode)
+    result.tempo = this.tempo
+    result.bpms = this.bpms
+    return result
+  }
+
+  public div (value: BeatTimecode | RationalValue): BeatTimecode {
+    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
+    const result = super.div(timecode) as BeatTimecode
+    result.timecode = this.timecode.div(timecode.timecode)
+    result.tempo = this.tempo
+    result.bpms = this.bpms
+    return result
   }
 
   protected cast (value: RationalValue): BeatTimecode {

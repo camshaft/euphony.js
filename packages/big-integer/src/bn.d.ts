@@ -57,6 +57,7 @@ declare module 'bn.js' {
     idivn(b: BNValue): BN
 
     divRounded(b: BNValue): BN
+    divmod(b: BNValue, mode?: ['mod', 'div'], positive?: boolean): {div: BN, mod: BN}
 
     mod(b: BNValue): BN
     umod(b: BNValue): BN
