@@ -11,19 +11,23 @@ export { Beat }
 export class BeatTimecode extends Beat implements ITime {
   public timecode: Timecode
   public tempo: Rational
+  private bpms: Rational
 
   public static fromTimecodeTempo (timecode: Timecode, tempo: RationalValue) {
     const bigTempo = new Rational(tempo)
-    const beatTimecode = new BeatTimecode(timecode.div(msInMinute.div(bigTempo)))
+    const bpms = msInMinute.div(bigTempo)
+    const beatTimecode = new BeatTimecode(timecode.div(bpms))
     beatTimecode.timecode = timecode
     beatTimecode.tempo = bigTempo
+    beatTimecode.bpms = bpms
     return beatTimecode
   }
 
   public static epoch (timecode: Timecode, tempo: RationalValue): BeatTimecode {
     const beatTimecode = new BeatTimecode(0)
     beatTimecode.timecode = timecode
-    beatTimecode.tempo = new Rational(tempo)
+    const bigTempo = beatTimecode.tempo = new Rational(tempo)
+    beatTimecode.bpms = msInMinute.div(bigTempo)
     return beatTimecode
   }
 
@@ -36,6 +40,7 @@ export class BeatTimecode extends Beat implements ITime {
     const result = super.add(timecode) as BeatTimecode
     result.timecode = this.timecode.add(timecode.timecode)
     result.tempo = this.tempo
+    result.bpms = this.bpms
     return result
   }
 
@@ -44,6 +49,7 @@ export class BeatTimecode extends Beat implements ITime {
     const result = super.sub(timecode) as BeatTimecode
     result.timecode = this.timecode.sub(timecode.timecode)
     result.tempo = this.tempo
+    result.bpms = this.bpms
     return result
   }
 
@@ -52,12 +58,13 @@ export class BeatTimecode extends Beat implements ITime {
   }
 
   protected cast (value: RationalValue): BeatTimecode {
-    const { tempo } = this
+    const { bpms, tempo } = this
 
-    const timecode = new Timecode(
-      msInMinute.div(tempo).mul(value)
-    )
+    const beatTimecode = new BeatTimecode(value)
+    beatTimecode.timecode = new Timecode(bpms.mul(value))
+    beatTimecode.tempo = tempo
+    beatTimecode.bpms = bpms
 
-    return BeatTimecode.fromTimecodeTempo(timecode, tempo)
+    return beatTimecode
   }
 }

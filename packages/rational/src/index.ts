@@ -2,12 +2,14 @@ import { BigInteger, BigIntegerValue } from '@euphony/big-integer'
 
 export type RationalValue = Rational | [BigIntegerValue, BigIntegerValue] | BigIntegerValue
 
+const one = new BigInteger(1)
+
 export default class Rational {
   public n: BigInteger
   public d: BigInteger
-  private _simplify: boolean = false
+  private _simplify: boolean = true
 
-  constructor (value: RationalValue, simplify = false) {
+  constructor (value: RationalValue, simplify = true) {
     if (value instanceof Rational) {
       this.n = value.n
       this.d = value.d
@@ -28,10 +30,14 @@ export default class Rational {
     const other = new (this.constructor as any)(value, false)
 
     const { n, d } = other
-    const x = this.n.mul(d)
-    const y = n.mul(this.d)
-    other.n = x.add(y)
-    other.d = this.d.mul(d)
+    if (this.d.eq(d)) {
+      other.n = this.n.add(n)
+    } else {
+      const x = this.n.mul(d)
+      const y = n.mul(this.d)
+      other.n = x.add(y)
+      other.d = this.d.mul(d)
+    }
 
     return other.simplify(this._simplify)
   }
@@ -60,10 +66,14 @@ export default class Rational {
     const other = new (this.constructor as any)(value, false)
 
     const { n, d } = other
-    const x = this.n.mul(d)
-    const y = n.mul(this.d)
-    other.n = x.sub(y)
-    other.d = this.d.mul(d)
+    if (this.d.eq(d)) {
+      other.n = this.n.sub(n)
+    } else {
+      const x = this.n.mul(d)
+      const y = n.mul(this.d)
+      other.n = x.sub(y)
+      other.d = this.d.mul(d)
+    }
 
     return other.simplify(this._simplify)
   }
@@ -97,11 +107,20 @@ export default class Rational {
     if (enable === true || enable === false) {
       this._simplify = enable
     }
-    if (this._simplify === false) return this
     const { n, d } = this
+
+    if (this.n.iszero()) {
+      this.d = one
+      return this
+    }
+
+    if (this._simplify === false || this.d.eq(one)) return this
+
     const gcdiv = n.gcd(d)
+
     this.d = d.div(gcdiv)
     this.n = n.div(gcdiv)
+
     return this
   }
 
