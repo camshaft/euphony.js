@@ -1,17 +1,17 @@
 {
-  "name": "@euphony/rational",
+  "name": "@euphony/time",
   "version": "1.0.0",
-  "description": "Rational numbers",
+  "description": "time data structure",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/big-integer": "*"
+    "@euphony/types": "*",
+    "@euphony/rational": "*"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

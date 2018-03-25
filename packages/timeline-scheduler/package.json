@@ -1,17 +1,18 @@
 {
-  "name": "@euphony/rational",
+  "name": "@euphony/timeline-scheduler",
   "version": "1.0.0",
-  "description": "Rational numbers",
+  "description": "schedule tasks on a given timeline",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/big-integer": "*"
+    "@euphony/types": "*",
+    "@euphony/relative-scheduler": "*",
+    "@euphony/scheduled-task": "*"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

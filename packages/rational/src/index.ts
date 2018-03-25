@@ -2,12 +2,12 @@ import { BigInteger, BigIntegerValue } from '@euphony/big-integer'
 
 export type RationalValue = Rational | [BigIntegerValue, BigIntegerValue] | BigIntegerValue
 
-export class Rational {
+export default class Rational {
   public n: BigInteger
   public d: BigInteger
-  private _simplify: boolean = true
+  private _simplify: boolean = false
 
-  constructor (value: RationalValue, simplify = true) {
+  constructor (value: RationalValue, simplify = false) {
     if (value instanceof Rational) {
       this.n = value.n
       this.d = value.d
@@ -83,6 +83,16 @@ export class Rational {
     return x.cmp(y)
   }
 
+  public floor (): Rational {
+    const {
+      n,
+      d,
+      _simplify,
+      constructor
+    } = this
+    return new (constructor as any)(n.div(d), _simplify)
+  }
+
   public simplify (enable?: boolean): Rational {
     if (enable === true || enable === false) {
       this._simplify = enable
@@ -103,3 +113,5 @@ export class Rational {
     return `${this.n}/${this.d}`
   }
 }
+
+export { Rational }

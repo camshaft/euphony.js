@@ -62,7 +62,7 @@ function _sub (m: BigInteger, other: BigInteger): BigInteger {
   return other
 }
 
-export class BigInteger {
+export default class BigInteger {
   public n: boolean
   public l: number[]
 
@@ -300,3 +300,5 @@ export class BigInteger {
     return this.n ? `-${digits}` : digits
   }
 }
+
+export { BigInteger }

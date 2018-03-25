@@ -1,17 +1,18 @@
 {
-  "name": "@euphony/rational",
+  "name": "@euphony/beat-time",
   "version": "1.0.0",
-  "description": "Rational numbers",
+  "description": "beat abstraction of time",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/big-integer": "*"
+    "@euphony/rational": "*",
+    "@euphony/time": "*",
+    "@euphony/types": "*"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

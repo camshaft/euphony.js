@@ -18,7 +18,8 @@ export default ({ input = 'src/index.ts', output = 'build/index' }) => ({
     },
     {
       file: `${output}.js`,
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'named'
     }
   ],
   external: id => (
@@ -28,7 +29,12 @@ export default ({ input = 'src/index.ts', output = 'build/index' }) => ({
     external({
       packagePath
     }),
-    typescript(),
+    typescript({
+      declarationDir: require('path').dirname(output),
+      exclude: input.indexOf('test/') === 0 ?
+        undefined :
+        ['test/*']
+    }),
     babel({
       runtimeHelpers: true
     }),

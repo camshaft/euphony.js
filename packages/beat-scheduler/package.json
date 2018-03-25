@@ -1,17 +1,21 @@
 {
-  "name": "@euphony/rational",
+  "name": "@euphony/beat-scheduler",
   "version": "1.0.0",
-  "description": "Rational numbers",
+  "description": "schedule beats on a parent timeline-scheduler",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/big-integer": "*"
+    "@euphony/beat-time": "*",
+    "@euphony/rational": "*",
+    "@euphony/time": "*",
+    "@euphony/skewable-task": "*",
+    "@euphony/timeline-scheduler": "*",
+    "@euphony/types": "*"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

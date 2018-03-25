@@ -1,17 +1,16 @@
 {
-  "name": "@euphony/rational",
+  "name": "@euphony/skewable-task",
   "version": "1.0.0",
-  "description": "Rational numbers",
+  "description": "a task that can be skewed with a epoch",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/big-integer": "*"
+    "@euphony/types": "*"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "ava-testcheck": "^1.0.0-rc.0",
-    "decimal.js": "^10.0.0"
+    "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
     "build": "rollup -c",

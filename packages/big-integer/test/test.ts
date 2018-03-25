@@ -1,7 +1,7 @@
 import { test } from 'ava'
 import { check, gen } from 'ava-testcheck'
 import { Decimal } from 'decimal.js'
-import { BigInteger } from '../src/index'
+import BigInteger from '../src/index'
 
 const enum Ops {
   add = 'add',
