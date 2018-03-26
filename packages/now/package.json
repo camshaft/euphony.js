@@ -1,13 +1,11 @@
 {
-  "name": "@euphony/buffered-clock-timer",
+  "name": "@euphony/now",
   "version": "1.0.0",
-  "description": "execute timers with a time buffer",
+  "description": "high resolution timer",
   "main": "build/index.js",
   "module": "build/index.mjs",
   "license": "MIT",
   "dependencies": {
-    "@euphony/now": "*",
-    "@euphony/time": "*",
     "@euphony/types": "*"
   },
   "devDependencies": {

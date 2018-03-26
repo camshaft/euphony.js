@@ -1,35 +1,63 @@
 import { IClock, ITimer } from '@euphony/types'
 import { Time, Timecode } from '@euphony/time'
+import { now } from '@euphony/now'
 
-export interface Timer {
-  ref (): void
-  unref (): void
-}
+export interface Timeout { }
 
 export default class BufferedClockTimer implements IClock<Timecode>, ITimer<Timecode> {
-  protected buffer: Time
-  protected timecode: Timecode
+  protected buffer: number
+  protected timecode?: Timecode
+  protected initialOffset: Timecode
+  private offset?: Timecode
 
-  constructor (buffer: Time = new Time(10)) {
-    this.buffer = buffer
-    this.timecode = new Timecode(0)
+  constructor (offset: Timecode = new Timecode(0), buffer: Time = new Time(10)) {
+    this.buffer = Math.floor(buffer.valueOf())
+    this.initialOffset = this.timecode = offset.add(this._now())
   }
 
-  public now (): Timecode {
-    return this.timecode
+  public now (time?: number): Timecode {
+    const { timecode } = this
+    if (timecode !== undefined) {
+      return timecode
+    } else {
+      if (time == undefined) {
+        time = this._now()
+      }
+
+      const { offset } = this
+      if (offset === undefined) {
+        return this.offset = this.initialOffset.sub(time)
+      } else {
+        return offset.add(time)
+      }
+    }
   }
 
-  public setTimeout (handle: () => void, time: Time): Timer {
-    const timecode = this.timecode.add(time)
-    const target = time.sub(this.buffer).valueOf()
+  public setTimeout (handle: () => void, time: Time): Timeout {
+    const { buffer } = this
+    const start = this._now()
+    const timecode = this.now(start)
+    const target = Math.floor(Math.max(
+      time.sub(buffer).valueOf(),
+      buffer,
+      0
+    ))
+
     return setTimeout(() => {
-      this.timecode = timecode
+      const end = this._now()
+      this.buffer = Math.floor(end - start - target)
+      this.timecode = timecode.add(time)
       handle()
+      this.timecode = undefined
     }, target)
   }
 
-  public clearTimeout (id: Timer) {
-    clearTimeout(id)
+  public clearTimeout (id: Timeout): void {
+    clearTimeout(id as { ref(): void, unref(): void })
+  }
+
+  protected _now (): number {
+    return Math.floor(now())
   }
 }
 
