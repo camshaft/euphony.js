@@ -151,9 +151,9 @@ export default class Rational {
     return this.n.div(this.d)
   }
 
-  // public inspect() {
-  //   return `<${this.constructor.name} ${this.toString()}>`
-  // }
+  public inspect() {
+    return `<${this.constructor.name} ${this.toString()}>`
+  }
 }
 
 export { Rational }

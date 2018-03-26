@@ -1,0 +1,25 @@
+{
+  "name": "@euphony/buffered-clock-timer",
+  "version": "1.0.0",
+  "description": "execute timers with a time buffer",
+  "main": "build/index.js",
+  "module": "build/index.mjs",
+  "license": "MIT",
+  "dependencies": {
+    "@euphony/time": "*",
+    "@euphony/types": "*"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "ava-testcheck": "^1.0.0-rc.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "rollup -c test/rollup.config.js && ava"
+  },
+  "ava": {
+    "files": [
+      "test/build/test.js"
+    ]
+  }
+}
