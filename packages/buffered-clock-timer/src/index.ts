@@ -12,25 +12,24 @@ export default class BufferedClockTimer implements IClock<Timecode>, ITimer<Time
 
   constructor (offset: Timecode = new Timecode(0), buffer: Time = new Time(10)) {
     this.buffer = Math.floor(buffer.valueOf())
-    this.initialOffset = this.timecode = offset.add(this._now())
+    this.initialOffset = this.timecode = this._now().add(offset).simplify(true)
   }
 
-  public now (time?: number): Timecode {
+  public now (time?: Timecode): Timecode {
     const { timecode } = this
-    if (timecode !== undefined) {
-      return timecode
-    } else {
-      if (time == undefined) {
-        time = this._now()
-      }
+    if (timecode !== undefined) return timecode
 
-      const { offset } = this
-      if (offset === undefined) {
-        return this.offset = this.initialOffset.sub(time)
-      } else {
-        return offset.add(time)
-      }
+    if (time == undefined) {
+      time = this._now()
     }
+
+    let { offset } = this
+    if (offset === undefined) {
+      const { buffer, initialOffset } = this
+      offset = this.offset = initialOffset.add(buffer).sub(time).simplify(true)
+    }
+
+    return offset.add(time)
   }
 
   public setTimeout (handle: () => void, time: Time): Timeout {
@@ -44,8 +43,9 @@ export default class BufferedClockTimer implements IClock<Timecode>, ITimer<Time
     ))
 
     return setTimeout(() => {
-      const end = this._now()
-      this.buffer = Math.floor(end - start - target)
+      this.buffer = Math.ceil(
+        this._now().sub(start).valueOf()
+      ) - target
       this.timecode = timecode.add(time)
       handle()
       this.timecode = undefined
@@ -56,8 +56,8 @@ export default class BufferedClockTimer implements IClock<Timecode>, ITimer<Time
     clearTimeout(id as { ref(): void, unref(): void })
   }
 
-  protected _now (): number {
-    return Math.floor(now())
+  protected _now (): Timecode {
+    return now()
   }
 }
 

@@ -2,10 +2,12 @@
   "name": "@euphony/now",
   "version": "1.0.0",
   "description": "high resolution timer",
-  "main": "build/index.js",
+  "main": "build/index",
   "module": "build/index.mjs",
+  "browser": "build/browser",
   "license": "MIT",
   "dependencies": {
+    "@euphony/time": "*",
     "@euphony/types": "*"
   },
   "devDependencies": {
@@ -13,7 +15,7 @@
     "ava-testcheck": "^1.0.0-rc.0"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && rollup -c rollup.config.browser.js",
     "test": "rollup -c test/rollup.config.js && ava"
   },
   "ava": {

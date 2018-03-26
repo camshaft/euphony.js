@@ -4,6 +4,8 @@ declare module 'bn.js' {
   export default class BN {
     constructor(value: BNValue, base?: number)
 
+    bitLength(): number
+
     clone(): BN
     toString(base?: number, length?: number): string
     toNumber(): number
@@ -11,24 +13,24 @@ declare module 'bn.js' {
     toJSON(): string
     isZero(): boolean
 
-    cmp(b: BNValue): number
-    ucmp(b: BNValue): number
-    cmpn(b: BNValue): number
+    cmp(b: BN): number
+    ucmp(b: BN): number
+    cmpn(b: number): number
 
-    lt(b: BNValue): BN
-    ltn(b: BNValue): BN
+    lt(b: BN): BN
+    ltn(b: number): BN
 
-    lte(b: BNValue): BN
-    lten(b: BNValue): BN
+    lte(b: BN): BN
+    lten(b: number): BN
 
-    gt(b: BNValue): BN
-    gtn(b: BNValue): BN
+    gt(b: BN): BN
+    gtn(b: number): BN
 
-    gte(b: BNValue): BN
-    gten(b: BNValue): BN
+    gte(b: BN): BN
+    gten(b: number): BN
 
-    eq(b: BNValue): BN
-    eqn(b: BNValue): BN
+    eq(b: BN): BN
+    eqn(b: number): BN
 
     neg(): BN
     ineg(): BN
@@ -36,38 +38,38 @@ declare module 'bn.js' {
     abs(): BN
     iabs(): BN
 
-    add(b: BNValue): BN
-    iadd(b: BNValue): BN
-    addn(b: BNValue): BN
-    iaddn(b: BNValue): BN
+    add(b: BN): BN
+    iadd(b: BN): BN
+    addn(b: number): BN
+    iaddn(b: number): BN
 
-    sub(b: BNValue): BN
-    isub(b: BNValue): BN
-    subn(b: BNValue): BN
-    isubn(b: BNValue): BN
+    sub(b: BN): BN
+    isub(b: BN): BN
+    subn(b: number): BN
+    isubn(b: number): BN
 
-    mul(b: BNValue): BN
-    imul(b: BNValue): BN
-    muln(b: BNValue): BN
-    imuln(b: BNValue): BN
+    mul(b: BN): BN
+    imul(b: BN): BN
+    muln(b: number): BN
+    imuln(b: number): BN
 
-    div(b: BNValue): BN
-    idiv(b: BNValue): BN
-    divn(b: BNValue): BN
-    idivn(b: BNValue): BN
+    div(b: BN): BN
+    idiv(b: BN): BN
+    divn(b: number): BN
+    idivn(b: number): BN
 
-    divRounded(b: BNValue): BN
-    divmod(b: BNValue, mode?: ['mod', 'div'], positive?: boolean): {div: BN, mod: BN}
+    divRounded(b: BN): BN
+    divmod(b: BN, mode?: ['mod', 'div'], positive?: boolean): {div: BN, mod: BN}
 
-    mod(b: BNValue): BN
-    umod(b: BNValue): BN
-    modn(b: BNValue): BN
+    mod(b: BN): BN
+    umod(b: BN): BN
+    modn(b: number): BN
 
     sqr(): BN
     isqr(): BN
 
-    pow(b: BNValue): BN
+    pow(b: BN): BN
 
-    gcd(b: BNValue): BN
+    gcd(b: BN): BN
   }
 }

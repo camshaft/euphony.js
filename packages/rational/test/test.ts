@@ -31,4 +31,7 @@ test('decimal.js oracle', check(opType, (t, ops) => {
   const converted = new Decimal(actual.n.toString()).div(actual.d.toString())
 
   t.true(expected.sub(converted).abs().lt(1))
+
+  // Test that valueOf works for large ratios
+  actual.valueOf()
 }))

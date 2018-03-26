@@ -3,6 +3,7 @@ import { BigInteger, BigIntegerValue } from '@euphony/big-integer'
 export type RationalValue = Rational | [BigIntegerValue, BigIntegerValue] | BigIntegerValue
 
 const one = new BigInteger(1)
+const two = new BigInteger(2)
 
 export default class Rational {
   public n: BigInteger
@@ -140,7 +141,19 @@ export default class Rational {
   }
 
   public valueOf (): number {
-    return this.n.valueOf() / this.d.valueOf()
+    let { n, d } = this
+    if (n.isZero()) return 0
+
+    const bits = Math.max(n.bitLength(), d.bitLength()) - 53
+    if (bits > 0) {
+      const scale = two.pow(new BigInteger(bits))
+      n = n.div(scale)
+      d = d.div(scale)
+    }
+
+    return d.isZero() ?
+      n.valueOf() :
+      (n.valueOf() / d.valueOf())
   }
 
   public toString (): string {
