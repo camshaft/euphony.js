@@ -8,7 +8,10 @@ import { Rational } from '@euphony/rational'
 const tempos = gen.intWithin(40, 250)
 
 const timeSignatures = gen.oneOf([
-  gen.array([gen.intWithin(1, 16), 8]),
+  gen.array([
+    gen.intWithin(1, 16),
+    gen.intWithin(2, 8)
+  ]),
 ])
 
 test('ratio oracle', check(tempos, timeSignatures, (t, tempo: number, ts: [number, number]) => {
