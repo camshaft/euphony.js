@@ -33,7 +33,7 @@ export class MeasureTimecode extends Measure implements ITime {
     simplify: boolean = true
   ) {
     const ts = new TimeSignature(timeSignature)
-    super(value.mul(ts), simplify)
+    super(value.div(ts), simplify)
     this.timeSignature = ts
     this._beatTimecode = value
     this.offset = (offset instanceof MeasureTimecode) ?
@@ -101,7 +101,7 @@ export class MeasureTimecode extends Measure implements ITime {
     }
     return new MeasureTimecode(
       new BeatTimecode(
-        new Rational(value).div(timeSignature),
+        new Rational(value).mul(timeSignature),
         this.beatTimecode.tempo
       ),
       timeSignature,
