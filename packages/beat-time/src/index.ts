@@ -14,13 +14,17 @@ export class BeatTimecode extends Beat implements ITime {
   protected _timecode?: Timecode
 
   constructor(
-    value: RationalValue,
+    value: Timecode | RationalValue,
     tempo: RationalValue = 120,
     offset: BeatTimecode | Timecode = new Timecode(0),
     simplify: boolean = true
   ) {
+    tempo = new Rational(tempo)
+    if (value instanceof Timecode) {
+      value = value.div(msInMinute.div(tempo))
+    }
     super(value, simplify)
-    this.tempo = new Rational(tempo)
+    this.tempo = tempo
     this.offset = (offset instanceof BeatTimecode) ?
       offset.timecode :
       offset
@@ -29,10 +33,11 @@ export class BeatTimecode extends Beat implements ITime {
   public get timecode (): Timecode {
     let { _timecode } = this
     if (_timecode === undefined) {
-      const { tempo } = this
-      _timecode = this._timecode = msInMinute.div(tempo).mul(this)
+      const { tempo, offset } = this
+      _timecode = this._timecode =
+        msInMinute.div(tempo).mul(this).add(offset)
     }
-    return _timecode.add(this.offset)
+    return _timecode
   }
 
   public cmp (value: RationalValue): number {
@@ -42,15 +47,15 @@ export class BeatTimecode extends Beat implements ITime {
   }
 
   protected cast (value: RationalValue, simplify: boolean): BeatTimecode {
-    const { tempo, offset } = this
     if (value instanceof BeatTimecode) {
       return new BeatTimecode(
         value,
-        tempo,
-        offset.add(value.offset),
+        value.tempo,
+        value.offset,
         simplify
       )
     }
+    const { tempo, offset } = this
     return new BeatTimecode(
       value,
       tempo,

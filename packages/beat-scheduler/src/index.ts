@@ -1,5 +1,5 @@
 import { Beat, BeatTimecode } from '@euphony/beat-time'
-import { Rational } from '@euphony/rational'
+import { Rational, RationalValue } from '@euphony/rational'
 import { Timecode } from '@euphony/time'
 import { IParentScheduler, IScheduledTask, ITask } from '@euphony/types'
 import { SkewableTask } from '@euphony/skewable-task'
@@ -12,26 +12,31 @@ export class BeatTask extends SkewableTask<Beat, BeatTimecode, Timecode> {
 
 export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecode, Timecode> {
   public scheduler: IParentScheduler<Timecode, Timecode, Timecode>
-  protected _tempo: number
+  protected _tempo: Rational
   protected epoch: BeatTimecode
 
   constructor (
-    tempo: number,
+    tempo: RationalValue,
     scheduler: IParentScheduler<Timecode, Timecode, Timecode>
   ) {
     this.scheduler = scheduler
-    this._tempo = tempo
-    this.epoch = new BeatTimecode(0, tempo, scheduler.currentTime())
+    this._tempo = new Rational(tempo)
+    this.epoch = new BeatTimecode(
+      0,
+      tempo,
+      scheduler.currentTime()
+    )
   }
 
   get tempo () {
-    return this._tempo
+    return this._tempo.valueOf()
   }
 
-  set tempo (tempo: number) {
-    if (tempo === this._tempo) return
+  set tempo (value: number) {
+    const tempo = new Rational(value)
+    if (tempo.eq(this.tempo)) return
     const epoch = this.epoch = this.currentTime()
-    epoch.tempo = new Rational(this._tempo = tempo)
+    this._tempo = tempo
     this.reschedule(epoch)
   }
 
@@ -39,14 +44,12 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
     const {
       _tempo,
       scheduler,
-      epoch: {
-        timecode
-      }
+      epoch
     } = this
 
-    const time = scheduler.currentTime().sub(timecode)
+    const time = scheduler.currentTime().sub(epoch.timecode)
 
-    return new BeatTimecode(time, _tempo, timecode)
+    return new BeatTimecode(time, _tempo, epoch) as BeatTimecode
   }
 
   public scheduleTask (

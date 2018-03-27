@@ -49,8 +49,8 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
     } = this
 
     const time = scheduler.currentTime().sub(epoch.beatTimecode) as BeatTimecode
-
-    return new MeasureTimecode(time, _timeSignature, epoch)
+    const timecode = new MeasureTimecode(time, _timeSignature, epoch)
+    return epoch.add(timecode) as MeasureTimecode
   }
 
   public scheduleTask (

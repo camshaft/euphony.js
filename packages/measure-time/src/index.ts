@@ -87,7 +87,7 @@ export class MeasureTimecode extends Measure implements ITime {
       return new MeasureTimecode(
         value.beatTimecode,
         value.timeSignature,
-        offset.add(value.offset) as BeatTimecode,
+        value.offset,
         simplify
       )
     }
