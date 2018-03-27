@@ -1,5 +1,5 @@
 import { Measure, MeasureTimecode, TimeSignature } from '@euphony/measure-time'
-import { Rational, RationalValue } from '@euphony/rational'
+import { RationalValue } from '@euphony/rational'
 import { Beat, BeatTimecode } from '@euphony/beat-time'
 import { Timecode } from '@euphony/time'
 import { IParentScheduler, IScheduledTask, ITask } from '@euphony/types'
@@ -23,7 +23,10 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
     this.scheduler = scheduler
     timeSignature = new TimeSignature(timeSignature)
     this._timeSignature = timeSignature
-    this.epoch = MeasureTimecode.epoch(scheduler.currentTime(), timeSignature)
+    this.epoch = new MeasureTimecode(
+      scheduler.currentTime(),
+      timeSignature
+    )
   }
 
   get timeSignature () {
@@ -32,9 +35,9 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
 
   set timeSignature (timeSignature: TimeSignature | [number, number]) {
     timeSignature = new TimeSignature(timeSignature)
-    if (timeSignature.cmp(this._timeSignature)) return
+    if (timeSignature.eq(this._timeSignature)) return
     const epoch = this.epoch = this.currentTime()
-    epoch.timeSignature = new Rational(this._timeSignature = timeSignature)
+    this._timeSignature = timeSignature
     this.reschedule(epoch)
   }
 
@@ -45,10 +48,9 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
       epoch
     } = this
 
-    const time = scheduler.currentTime().sub(epoch.beatTimecode)
+    const time = scheduler.currentTime().sub(epoch.beatTimecode) as BeatTimecode
 
-    const timecode = MeasureTimecode.fromBeatTimesignature(time, _timeSignature)
-    return timecode.add(epoch)
+    return new MeasureTimecode(time, _timeSignature, epoch)
   }
 
   public scheduleTask (
@@ -85,7 +87,7 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
   public relative (offset: Measure) {
     const scheduler = new MeasureScheduler(this._timeSignature, this.scheduler)
     // TODO i don't think this is correct - fix it
-    scheduler.epoch = this.epoch.add(offset)
+    scheduler.epoch = this.epoch.add(offset) as MeasureTimecode
 
     return scheduler
   }

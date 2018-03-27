@@ -8,7 +8,7 @@ const two = new BigInteger(2)
 export default class Rational {
   public n: BigInteger
   public d: BigInteger
-  private _simplify: boolean = true
+  protected _simplify: boolean = true
 
   constructor (value: RationalValue, simplify = true) {
     if (value instanceof Rational) {
@@ -28,7 +28,7 @@ export default class Rational {
   }
 
   public add (value: RationalValue): Rational {
-    const other = new (this.constructor as any)(value, false)
+    const other = this.cast(value, false)
 
     const { n, d } = other
     if (this.d.eq(d)) {
@@ -46,7 +46,7 @@ export default class Rational {
   public div (value: RationalValue): Rational {
     if (this.n.isZero()) return this
 
-    const other = new (this.constructor as any)(value, false)
+    const other = this.cast(value, false)
 
     const { n, d } = other
     other.n = this.n.mul(d)
@@ -61,15 +61,15 @@ export default class Rational {
     const { div, mod } = n.divmod(d)
 
     return {
-      div: new (this.constructor as any)(div, false),
-      mod: new (this.constructor as any)([mod, d], false)
+      div: this.cast(div, false),
+      mod: this.cast([mod, d], false)
     }
   }
 
   public mul (value: RationalValue): Rational {
     if (this.n.isZero()) return this
 
-    const other = new (this.constructor as any)(value, false)
+    const other = this.cast(value, false)
 
     const { n, d } = other
     other.n = this.n.mul(n)
@@ -79,7 +79,7 @@ export default class Rational {
   }
 
   public sub (value: RationalValue): Rational {
-    const other = new (this.constructor as any)(value, false)
+    const other = this.cast(value, false)
 
     const { n, d } = other
     if (this.d.eq(d)) {
@@ -95,13 +95,13 @@ export default class Rational {
   }
 
   public neg (): Rational {
-    const n: Rational = new (this.constructor as any)(this, false)
+    const n: Rational = this.cast(this, false)
     n.n = n.n.neg()
     return n
   }
 
   public cmp (value: RationalValue): number {
-    const other = new (this.constructor as any)(value, false)
+    const other = this.cast(value, false)
 
     const x = this.n.mul(other.d)
     const y = this.d.mul(other.n)
@@ -109,14 +109,41 @@ export default class Rational {
     return x.cmp(y)
   }
 
+  public eq (n: RationalValue): boolean {
+    return this.cmp(n) === 0
+  }
+
+  public ne (n: RationalValue): boolean {
+    return this.cmp(n) !== 0
+  }
+
+  public gt (n: RationalValue): boolean {
+    return this.cmp(n) > 0
+  }
+
+  public gte (n: RationalValue): boolean {
+    return this.cmp(n) > -1
+  }
+
+  public lt (n: RationalValue): boolean {
+    return this.cmp(n) < 0
+  }
+
+  public lte (n: RationalValue): boolean {
+    return this.cmp(n) < 1
+  }
+
+  protected cast(value: RationalValue, simplify: boolean): Rational {
+    return new (this.constructor as any)(value, simplify)
+  }
+
   public floor (): Rational {
     const {
       n,
       d,
-      _simplify,
-      constructor
+      _simplify
     } = this
-    return new (constructor as any)(n.div(d), _simplify)
+    return this.cast(n.div(d), _simplify)
   }
 
   public simplify (enable?: boolean): Rational {

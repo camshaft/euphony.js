@@ -21,7 +21,7 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
   ) {
     this.scheduler = scheduler
     this._tempo = tempo
-    this.epoch = BeatTimecode.epoch(scheduler.currentTime(), tempo)
+    this.epoch = new BeatTimecode(0, tempo, scheduler.currentTime())
   }
 
   get tempo () {
@@ -39,13 +39,14 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
     const {
       _tempo,
       scheduler,
-      epoch
+      epoch: {
+        timecode
+      }
     } = this
 
-    const time = scheduler.currentTime().sub(epoch.timecode)
+    const time = scheduler.currentTime().sub(timecode)
 
-    const timecode = BeatTimecode.fromTimecodeTempo(time, _tempo)
-    return timecode.add(epoch)
+    return new BeatTimecode(time, _tempo, timecode)
   }
 
   public scheduleTask (
@@ -76,7 +77,7 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
   public relative (offset: Beat) {
     const scheduler = new BeatScheduler(this._tempo, this.scheduler)
     // TODO i don't think this is correct - fix it
-    scheduler.epoch = this.epoch.add(offset)
+    scheduler.epoch = this.epoch.add(offset) as BeatTimecode
 
     return scheduler
   }

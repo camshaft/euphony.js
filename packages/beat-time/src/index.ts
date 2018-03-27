@@ -2,83 +2,60 @@ import { Rational, RationalValue } from '@euphony/rational'
 import { Timecode } from '@euphony/time'
 import { ITime } from '@euphony/types'
 
-const msInMinute = new Rational(60000)
+const msInMinute = new Timecode(60000)
 
 export default class Beat extends Rational implements ITime { }
 
 export { Beat }
 
 export class BeatTimecode extends Beat implements ITime {
-  public timecode: Timecode
+  public offset: Timecode
   public tempo: Rational
-  private bpms: Rational
+  protected _timecode?: Timecode
 
-  public static fromTimecodeTempo (timecode: Timecode, tempo: RationalValue) {
-    const bigTempo = new Rational(tempo)
-    const bpms = msInMinute.div(bigTempo)
-    const beatTimecode = new BeatTimecode(timecode.div(bpms))
-    beatTimecode.timecode = timecode
-    beatTimecode.tempo = bigTempo
-    beatTimecode.bpms = bpms
-    return beatTimecode
+  constructor(
+    value: RationalValue,
+    tempo: RationalValue = 120,
+    offset: BeatTimecode | Timecode = new Timecode(0),
+    simplify: boolean = true
+  ) {
+    super(value, simplify)
+    this.tempo = new Rational(tempo)
+    this.offset = (offset instanceof BeatTimecode) ?
+      offset.timecode :
+      offset
   }
 
-  public static epoch (timecode: Timecode, tempo: RationalValue): BeatTimecode {
-    const beatTimecode = new BeatTimecode(0)
-    beatTimecode.timecode = timecode
-    const bigTempo = beatTimecode.tempo = new Rational(tempo)
-    beatTimecode.bpms = msInMinute.div(bigTempo)
-    return beatTimecode
+  public get timecode (): Timecode {
+    let { _timecode } = this
+    if (_timecode === undefined) {
+      const { tempo } = this
+      _timecode = this._timecode = msInMinute.div(tempo).mul(this)
+    }
+    return _timecode.add(this.offset)
   }
 
-  public cmp (timecode: BeatTimecode): number {
-    return this.timecode.cmp(timecode.timecode)
+  public cmp (value: RationalValue): number {
+    return (value instanceof BeatTimecode) ?
+      this.timecode.cmp(value.timecode) :
+      super.cmp(value)
   }
 
-  public add (value: BeatTimecode | RationalValue): BeatTimecode {
-    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
-    const result = super.add(timecode) as BeatTimecode
-    result.timecode = this.timecode.add(timecode.timecode)
-    result.tempo = this.tempo
-    result.bpms = this.bpms
-    return result
-  }
-
-  public sub (value: BeatTimecode | RationalValue): BeatTimecode {
-    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
-    const result = super.sub(timecode) as BeatTimecode
-    result.timecode = this.timecode.sub(timecode.timecode)
-    result.tempo = this.tempo
-    result.bpms = this.bpms
-    return result
-  }
-
-  public mul (value: BeatTimecode | RationalValue): BeatTimecode {
-    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
-    const result = super.mul(timecode) as BeatTimecode
-    result.timecode = this.timecode.mul(timecode.timecode)
-    result.tempo = this.tempo
-    result.bpms = this.bpms
-    return result
-  }
-
-  public div (value: BeatTimecode | RationalValue): BeatTimecode {
-    const timecode = (value instanceof BeatTimecode) ? value : this.cast(value)
-    const result = super.div(timecode) as BeatTimecode
-    result.timecode = this.timecode.div(timecode.timecode)
-    result.tempo = this.tempo
-    result.bpms = this.bpms
-    return result
-  }
-
-  protected cast (value: RationalValue): BeatTimecode {
-    const { bpms, tempo } = this
-
-    const beatTimecode = new BeatTimecode(value)
-    beatTimecode.timecode = new Timecode(bpms.mul(value))
-    beatTimecode.tempo = tempo
-    beatTimecode.bpms = bpms
-
-    return beatTimecode
+  protected cast (value: RationalValue, simplify: boolean): BeatTimecode {
+    const { tempo, offset } = this
+    if (value instanceof BeatTimecode) {
+      return new BeatTimecode(
+        value,
+        tempo,
+        offset.add(value.offset),
+        simplify
+      )
+    }
+    return new BeatTimecode(
+      value,
+      tempo,
+      offset,
+      simplify
+    )
   }
 }

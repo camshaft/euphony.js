@@ -13,28 +13,37 @@ export class TimeSignature extends Rational {
   }
 
   public simplify() {
-    return super.simplify(false)
+    return this
   }
 }
 
+export type TimeSignatureValue = TimeSignature | [number, number]
+
 export class MeasureTimecode extends Measure implements ITime {
-  public beatTimecode: BeatTimecode
-  public timeSignature: Rational
+  public offset: BeatTimecode
+  public timeSignature: TimeSignature
+  protected _beatTimecode: BeatTimecode
   protected _beat?: Beat
   protected _measure?: Measure
 
-  public static fromBeatTimesignature (beatTimecode: BeatTimecode, timeSignature: TimeSignature): MeasureTimecode {
-    const measureTimecode = new MeasureTimecode(beatTimecode.div(timeSignature))
-    measureTimecode.timeSignature = timeSignature
-    measureTimecode.beatTimecode = beatTimecode
-    return measureTimecode
+  constructor(
+    value: BeatTimecode,
+    timeSignature: TimeSignatureValue = [4, 4],
+    offset: MeasureTimecode | BeatTimecode = new BeatTimecode(0, value.tempo),
+    simplify: boolean = true
+  ) {
+    const ts = new TimeSignature(timeSignature)
+    super(value.mul(ts), simplify)
+    this.timeSignature = ts
+    this._beatTimecode = value
+    this.offset = (offset instanceof MeasureTimecode) ?
+      offset.offset :
+      offset
   }
 
-  public static epoch (beatTimecode: BeatTimecode, timeSignature: TimeSignature): MeasureTimecode {
-    const measureTimecode = new MeasureTimecode(0)
-    measureTimecode.timeSignature = timeSignature
-    measureTimecode.beatTimecode = beatTimecode
-    return measureTimecode
+  public get beatTimecode (): BeatTimecode {
+    let { _beatTimecode, offset } = this
+    return _beatTimecode.add(offset) as BeatTimecode
   }
 
   public get timecode (): Timecode {
@@ -63,55 +72,41 @@ export class MeasureTimecode extends Measure implements ITime {
     this._beat = new Beat(mod)
   }
 
-  public cmp (measureTimecode: MeasureTimecode): number {
-    return this.beatTimecode.cmp(measureTimecode.beatTimecode)
-  }
-
-  public add (value: MeasureTimecode | RationalValue): MeasureTimecode {
-    const timecode = (value instanceof MeasureTimecode) ? value : this.cast(value)
-    const result = super.add(timecode) as MeasureTimecode
-    result.beatTimecode = this.beatTimecode.add(timecode.beatTimecode)
-    result.timeSignature = this.timeSignature
-    return result
-  }
-
-  public sub (value: MeasureTimecode | RationalValue): MeasureTimecode {
-    const timecode = (value instanceof MeasureTimecode) ? value : this.cast(value)
-    const result = super.sub(timecode) as MeasureTimecode
-    result.beatTimecode = this.beatTimecode.sub(timecode.beatTimecode)
-    result.timeSignature = this.timeSignature
-    return result
-  }
-
-  public mul (value: MeasureTimecode | RationalValue): MeasureTimecode {
-    const timecode = (value instanceof MeasureTimecode) ? value : this.cast(value)
-    const result = super.mul(timecode) as MeasureTimecode
-    result.beatTimecode = this.beatTimecode.mul(timecode.beatTimecode)
-    result.timeSignature = this.timeSignature
-    return result
-  }
-
-  public div (value: MeasureTimecode | RationalValue): MeasureTimecode {
-    const timecode = (value instanceof MeasureTimecode) ? value : this.cast(value)
-    const result = super.div(timecode) as MeasureTimecode
-    result.beatTimecode = this.beatTimecode.div(timecode.beatTimecode)
-    result.timeSignature = this.timeSignature
-    return result
-  }
-
-  // public inspect() {
-  //   return this.beatTimecode.inspect()
-  // }
-
-  protected cast (value: RationalValue): MeasureTimecode {
-    const { timeSignature } = this
-
-    const measureTimecode = new MeasureTimecode(value)
-    measureTimecode.beatTimecode = new BeatTimecode(
-      timeSignature.mul(value)
+  public cmp (value: RationalValue): number {
+    return (value instanceof MeasureTimecode) ?
+      this.timecode.cmp(value.timecode) : (
+      (value instanceof BeatTimecode) ?
+        this.beatTimecode.cmp(value) :
+        super.cmp(value)
     )
-    measureTimecode.timeSignature = timeSignature
+  }
 
-    return measureTimecode
+  protected cast (value: RationalValue, simplify: boolean): MeasureTimecode {
+    const { timeSignature, offset } = this
+    if (value instanceof MeasureTimecode) {
+      return new MeasureTimecode(
+        value.beatTimecode,
+        value.timeSignature,
+        offset.add(value.offset) as BeatTimecode,
+        simplify
+      )
+    }
+    if (value instanceof BeatTimecode) {
+      return new MeasureTimecode(
+        value,
+        timeSignature,
+        offset.add(value.offset) as BeatTimecode,
+        simplify
+      )
+    }
+    return new MeasureTimecode(
+      new BeatTimecode(
+        new Rational(value).div(timeSignature),
+        this.beatTimecode.tempo
+      ),
+      timeSignature,
+      offset,
+      simplify
+    )
   }
 }
