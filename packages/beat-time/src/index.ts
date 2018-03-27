@@ -8,7 +8,7 @@ export default class Beat extends Rational implements ITime { }
 
 export { Beat }
 
-export class BeatTimecode extends Beat implements ITime {
+export class BeatTimecode extends Rational implements ITime {
   public offset: Timecode
   public tempo: Rational
   protected _timecode?: Timecode
@@ -46,21 +46,29 @@ export class BeatTimecode extends Beat implements ITime {
       super.cmp(value)
   }
 
-  protected cast (value: RationalValue, simplify: boolean): BeatTimecode {
+  protected cast (value: RationalValue, simplify: boolean): this {
     if (value instanceof BeatTimecode) {
       return new BeatTimecode(
         value,
         value.tempo,
         value.offset,
         simplify
-      )
+      ) as this
     }
     const { tempo, offset } = this
+    if (value instanceof Timecode) {
+      return new BeatTimecode(
+        new Rational(value).div(tempo).div(msInMinute),
+        tempo,
+        offset,
+        simplify
+      ) as this
+    }
     return new BeatTimecode(
       value,
       tempo,
       offset,
       simplify
-    )
+    ) as this
   }
 }

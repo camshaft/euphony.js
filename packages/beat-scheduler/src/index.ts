@@ -49,7 +49,7 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
 
     const time = scheduler.currentTime().sub(epoch.timecode)
 
-    return new BeatTimecode(time, _tempo, epoch) as BeatTimecode
+    return new BeatTimecode(time, _tempo, epoch)
   }
 
   public scheduleTask (
@@ -80,7 +80,7 @@ export default class BeatScheduler implements IParentScheduler<Beat, BeatTimecod
   public relative (offset: Beat) {
     const scheduler = new BeatScheduler(this._tempo, this.scheduler)
     // TODO i don't think this is correct - fix it
-    scheduler.epoch = this.epoch.add(offset) as BeatTimecode
+    scheduler.epoch = this.epoch.add(offset)
 
     return scheduler
   }

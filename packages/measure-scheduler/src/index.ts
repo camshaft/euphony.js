@@ -48,9 +48,9 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
       epoch
     } = this
 
-    const time = scheduler.currentTime().sub(epoch.beatTimecode) as BeatTimecode
+    const time = scheduler.currentTime().sub(epoch.beatTimecode)
     const timecode = new MeasureTimecode(time, _timeSignature, epoch)
-    return epoch.add(timecode) as MeasureTimecode
+    return epoch.add(timecode)
   }
 
   public scheduleTask (
@@ -87,7 +87,7 @@ export default class MeasureScheduler implements IParentScheduler<Measure, Measu
   public relative (offset: Measure) {
     const scheduler = new MeasureScheduler(this._timeSignature, this.scheduler)
     // TODO i don't think this is correct - fix it
-    scheduler.epoch = this.epoch.add(offset) as MeasureTimecode
+    scheduler.epoch = this.epoch.add(offset)
 
     return scheduler
   }

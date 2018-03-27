@@ -5,6 +5,11 @@ export type RationalValue = Rational | [BigIntegerValue, BigIntegerValue] | BigI
 const one = new BigInteger(1)
 const two = new BigInteger(2)
 
+export interface DivMod<T> {
+  div: T
+  mod: T
+}
+
 export default class Rational {
   public n: BigInteger
   public d: BigInteger
@@ -27,7 +32,7 @@ export default class Rational {
     }
   }
 
-  public add (value: RationalValue): Rational {
+  public add (value: RationalValue): this {
     const other = this.cast(value, false)
 
     const { n, d } = other
@@ -43,7 +48,7 @@ export default class Rational {
     return other.simplify(this._simplify)
   }
 
-  public div (value: RationalValue): Rational {
+  public div (value: RationalValue): this {
     if (this.n.isZero()) return this
 
     const other = this.cast(value, false)
@@ -55,7 +60,7 @@ export default class Rational {
     return other.simplify(this._simplify)
   }
 
-  public divmod (value?: RationalValue): { div: Rational, mod: Rational } {
+  public divmod (value?: RationalValue): DivMod<this> {
     const { n, d } = value === undefined ? this : this.div(value)
 
     const { div, mod } = n.divmod(d)
@@ -66,7 +71,7 @@ export default class Rational {
     }
   }
 
-  public mul (value: RationalValue): Rational {
+  public mul (value: RationalValue): this {
     if (this.n.isZero()) return this
 
     const other = this.cast(value, false)
@@ -78,7 +83,7 @@ export default class Rational {
     return other.simplify(this._simplify)
   }
 
-  public sub (value: RationalValue): Rational {
+  public sub (value: RationalValue): this {
     const other = this.cast(value, false)
 
     const { n, d } = other
@@ -94,8 +99,8 @@ export default class Rational {
     return other.simplify(this._simplify)
   }
 
-  public neg (): Rational {
-    const n: Rational = this.cast(this, false)
+  public neg (): this {
+    const n: this = this.cast(this, false)
     n.n = n.n.neg()
     return n
   }
@@ -133,11 +138,11 @@ export default class Rational {
     return this.cmp(n) < 1
   }
 
-  protected cast(value: RationalValue, simplify: boolean): Rational {
+  protected cast(value: RationalValue, simplify: boolean): this {
     return new (this.constructor as any)(value, simplify)
   }
 
-  public floor (): Rational {
+  public floor (): this {
     const {
       n,
       d,
@@ -146,7 +151,7 @@ export default class Rational {
     return this.cast(n.div(d), _simplify)
   }
 
-  public simplify (enable?: boolean): Rational {
+  public simplify (enable?: boolean): this {
     if (enable === true || enable === false) {
       this._simplify = enable
     }
@@ -185,10 +190,6 @@ export default class Rational {
 
   public toString (): string {
     return `${this.n}/${this.d}`
-  }
-
-  public toBigInteger(): BigInteger {
-    return this.n.div(this.d)
   }
 
   public inspect() {

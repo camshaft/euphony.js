@@ -12,14 +12,14 @@ export class TimeSignature extends Rational {
     super(value, false)
   }
 
-  public simplify() {
+  public simplify(): this {
     return this
   }
 }
 
 export type TimeSignatureValue = TimeSignature | [number, number]
 
-export class MeasureTimecode extends Measure implements ITime {
+export class MeasureTimecode extends Rational implements ITime {
   public offset: BeatTimecode
   public timeSignature: TimeSignature
   protected _beatTimecode: BeatTimecode
@@ -43,7 +43,7 @@ export class MeasureTimecode extends Measure implements ITime {
 
   public get beatTimecode (): BeatTimecode {
     let { _beatTimecode, offset } = this
-    return _beatTimecode.add(offset) as BeatTimecode
+    return _beatTimecode.add(offset)
   }
 
   public get timecode (): Timecode {
@@ -81,7 +81,7 @@ export class MeasureTimecode extends Measure implements ITime {
     )
   }
 
-  protected cast (value: RationalValue, simplify: boolean): MeasureTimecode {
+  protected cast (value: RationalValue, simplify: boolean): this {
     const { timeSignature, offset } = this
     if (value instanceof MeasureTimecode) {
       return new MeasureTimecode(
@@ -89,15 +89,15 @@ export class MeasureTimecode extends Measure implements ITime {
         value.timeSignature,
         value.offset,
         simplify
-      )
+      ) as this
     }
     if (value instanceof BeatTimecode) {
       return new MeasureTimecode(
         value,
         timeSignature,
-        offset.add(value.offset) as BeatTimecode,
+        offset.add(value.offset),
         simplify
-      )
+      ) as this
     }
     return new MeasureTimecode(
       new BeatTimecode(
@@ -107,6 +107,6 @@ export class MeasureTimecode extends Measure implements ITime {
       timeSignature,
       offset,
       simplify
-    )
+    ) as this
   }
 }
